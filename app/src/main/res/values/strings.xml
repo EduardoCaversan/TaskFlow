@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TaskFlow</string>
+    <string name="main_title">Minhas tarefas</string>
+    <string name="main_subtitle">Organize o que precisa ser feito</string>
+    <string name="empty_tasks_title">Nenhuma tarefa por enquanto</string>
+    <string name="empty_tasks_message">Use o botão abaixo para criar sua primeira tarefa.</string>
+    <string name="add_task">Adicionar tarefa</string>
+    <string name="new_task_title">Nova tarefa</string>
+    <string name="task_description">Descrição da tarefa</string>
+    <string name="task_description_hint">Ex.: Estudar para a prova</string>
+    <string name="task_priority">Prioridade</string>
+    <string name="priority_low">Baixa</string>
+    <string name="priority_medium">Média</string>
+    <string name="priority_high">Alta</string>
+    <string name="save">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="task_details_title">Detalhes da tarefa</string>
+    <string name="task_details_message">Esta tela será usada para visualizar e editar uma tarefa nas próximas etapas.</string>
+    <string name="task_without_description">Tarefa sem descrição</string>
+    <string name="back">Voltar</string>
+</resources>
