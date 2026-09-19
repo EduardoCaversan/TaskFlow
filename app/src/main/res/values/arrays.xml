@@ -1,8 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="priorities">
         <item>@string/priority_low</item>
         <item>@string/priority_medium</item>
         <item>@string/priority_high</item>
+    </string-array>
+    <string-array name="statuses">
+        <item>@string/status_pending</item>
+        <item>@string/status_completed</item>
+    </string-array>
+    <string-array name="filters">
+        <item>@string/filter_all</item>
+        <item>@string/filter_pending</item>
+        <item>@string/filter_completed</item>
     </string-array>
 </resources>

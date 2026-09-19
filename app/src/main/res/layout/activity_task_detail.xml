@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/task_details_title"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/task_details_message"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_back"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/back" />
-</LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/edit_task_title"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
+        <com.google.android.material.textfield.TextInputLayout android:id="@+id/input_description_layout" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="24dp" android:hint="@string/task_description">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/input_description" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:inputType="textCapSentences" android:minLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/task_priority" />
+        <Spinner android:id="@+id/spinner_priority" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/priorities" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="@string/task_status" />
+        <Spinner android:id="@+id/spinner_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/statuses" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/button_save" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="32dp" android:text="@string/save_changes" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/button_delete" style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/delete" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/button_cancel" style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/cancel" />
+    </LinearLayout>
+</ScrollView>
