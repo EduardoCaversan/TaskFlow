@@ -31,4 +31,20 @@
     <string name="delete">Excluir</string>
     <string name="delete_task">Excluir tarefa</string>
     <string name="delete_confirmation">Deseja realmente excluir esta tarefa?</string>
+    <string name="progress_title">Seu progresso</string>
+    <string name="pending_short">pendentes</string>
+    <string name="completed_short">concluídas</string>
+    <string name="my_tasks">Minhas tarefas</string>
+    <string name="add_task_short">Nova tarefa</string>
+    <string name="task_details">Detalhes da tarefa</string>
+    <string name="splash_tagline">Organização que acompanha seu ritmo</string>
+    <string name="priority_required">Selecione uma prioridade válida.</string>
+    <string name="task_created">Tarefa criada.</string>
+    <string name="task_updated">Tarefa atualizada.</string>
+    <string name="task_deleted">Tarefa excluída.</string>
+    <string name="mark_pending">Marcar tarefa como pendente</string>
+    <string name="empty_pending_title">Nenhuma tarefa pendente</string>
+    <string name="empty_pending_message">Você concluiu tudo que estava pendente.</string>
+    <string name="empty_completed_title">Nenhuma tarefa concluída</string>
+    <string name="empty_completed_message">As tarefas concluídas aparecerão aqui.</string>
 </resources>
