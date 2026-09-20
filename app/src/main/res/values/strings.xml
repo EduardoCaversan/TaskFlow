@@ -47,4 +47,12 @@
     <string name="empty_pending_message">Você concluiu tudo que estava pendente.</string>
     <string name="empty_completed_title">Nenhuma tarefa concluída</string>
     <string name="empty_completed_message">As tarefas concluídas aparecerão aqui.</string>
+    <string name="theme_selector">Selecionar tema</string>
+    <string name="theme_selector_title">Tema do aplicativo</string>
+    <string name="theme_system">Usar tema do sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_current_system">Tema atual: sistema</string>
+    <string name="theme_current_light">Tema atual: claro</string>
+    <string name="theme_current_dark">Tema atual: escuro</string>
 </resources>

@@ -15,9 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_TASK_ID = "task_id";
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         completedCount = findViewById(R.id.text_completed_count);
         selectedFilter = getString(R.string.filter_all);
         findViewById(R.id.button_add_task).setOnClickListener(view -> startActivityForResult(new Intent(this, TaskFormActivity.class), REQUEST_TASK));
+        MaterialButton themeButton = findViewById(R.id.button_theme);
+        updateThemeButton(themeButton);
+        themeButton.setOnClickListener(view -> showThemeSelector());
         ChipGroup filters = findViewById(R.id.filter_group);
         filters.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
@@ -52,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TASK && resultCode == RESULT_OK) {
-            showTasks();
             if (data != null) Snackbar.make(taskList, data.getStringExtra(EXTRA_FEEDBACK), Snackbar.LENGTH_SHORT).show();
         }
     }
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             description.setText(task.getDescription());
             description.setPaintFlags(task.isCompleted() ? description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             description.setAlpha(task.isCompleted() ? 0.62f : 1f);
-            TextView priority = item.findViewById(R.id.text_task_priority); priority.setText(task.getPriority().toUpperCase()); applyPriorityStyle(priority, task.getPriority());
+            TextView priority = item.findViewById(R.id.text_task_priority); priority.setText(task.getPriority().toUpperCase(Locale.getDefault())); applyPriorityStyle(priority, task.getPriority());
             TextView status = item.findViewById(R.id.text_task_status);
             status.setText(task.isCompleted() ? R.string.status_completed : R.string.status_pending);
             status.setBackgroundResource(task.isCompleted() ? R.drawable.bg_status_completed : R.drawable.bg_status_pending);
@@ -93,6 +98,29 @@ public class MainActivity extends AppCompatActivity {
     }
     private boolean matchesFilter(Task task) { return selectedFilter.equals(getString(R.string.filter_all)) || (selectedFilter.equals(getString(R.string.filter_pending)) && !task.isCompleted()) || (selectedFilter.equals(getString(R.string.filter_completed)) && task.isCompleted()); }
     private void openTaskDetails(long taskId) { Intent intent = new Intent(this, TaskDetailActivity.class); intent.putExtra(EXTRA_TASK_ID, taskId); startActivityForResult(intent, REQUEST_TASK); }
+    private void showThemeSelector() {
+        String currentMode = ThemePreferences.getThemeMode(this);
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.theme_selector_title)
+                .setSingleChoiceItems(R.array.theme_options, ThemePreferences.toSelection(currentMode), (dialog, which) -> {
+                    ThemePreferences.saveThemeMode(this, ThemePreferences.fromSelection(which));
+                    dialog.dismiss();
+                })
+                .show();
+    }
+    private void updateThemeButton(MaterialButton button) {
+        String mode = ThemePreferences.getThemeMode(this);
+        if (ThemePreferences.MODE_LIGHT.equals(mode)) {
+            button.setIconResource(R.drawable.ic_light_mode_24);
+            button.setContentDescription(getString(R.string.theme_current_light));
+        } else if (ThemePreferences.MODE_DARK.equals(mode)) {
+            button.setIconResource(R.drawable.ic_dark_mode_24);
+            button.setContentDescription(getString(R.string.theme_current_dark));
+        } else {
+            button.setIconResource(R.drawable.ic_brightness_auto_24);
+            button.setContentDescription(getString(R.string.theme_current_system));
+        }
+    }
     private void applyPriorityStyle(TextView priorityView, String priority) {
         int background = R.color.priority_low_container, foreground = R.color.priority_low_on_container;
         if (priority.equals(getString(R.string.priority_high))) { background = R.color.priority_high_container; foreground = R.color.priority_high_on_container; }
