@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="24dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/new_task_title"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5" />
-        <com.google.android.material.textfield.TextInputLayout android:id="@+id/input_description_layout" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="24dp" android:hint="@string/task_description">
-            <com.google.android.material.textfield.TextInputEditText android:id="@+id/input_description" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:hint="@string/task_description_hint" android:inputType="textCapSentences" android:minLines="2" />
-        </com.google.android.material.textfield.TextInputLayout>
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp"
-            android:text="@string/task_priority" android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
-        <Spinner android:id="@+id/spinner_priority" android:layout_width="match_parent" android:layout_height="wrap_content" android:entries="@array/priorities" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/button_save" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="32dp" android:text="@string/save" />
-        <com.google.android.material.button.MaterialButton android:id="@+id/button_cancel" style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/cancel" />
-    </LinearLayout>
-</ScrollView>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="?attr/colorSurface"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/screen_horizontal_margin">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/new_task_title" android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium" /><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:text="@string/form_subtitle" android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+    <com.google.android.material.textfield.TextInputLayout android:id="@+id/input_description_layout" style="@style/Widget.Material3.TextInputLayout.OutlinedBox" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:hint="@string/task_description"><com.google.android.material.textfield.TextInputEditText android:id="@+id/input_description" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="top" android:inputType="textCapSentences|textMultiLine" android:minLines="3" /></com.google.android.material.textfield.TextInputLayout>
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="@string/task_priority" android:textAppearance="@style/TextAppearance.Material3.LabelLarge" /><com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" app:cardCornerRadius="12dp" app:cardElevation="0dp" app:strokeColor="?attr/colorOutline" app:strokeWidth="1dp"><Spinner android:id="@+id/spinner_priority" android:layout_width="match_parent" android:layout_height="52dp" android:entries="@array/priorities" android:paddingStart="16dp" android:paddingEnd="12dp" /></com.google.android.material.card.MaterialCardView>
+    <com.google.android.material.button.MaterialButton android:id="@+id/button_save" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="32dp" android:minHeight="52dp" android:text="@string/save" /><com.google.android.material.button.MaterialButton android:id="@+id/button_cancel" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/cancel" />
+</LinearLayout></ScrollView>

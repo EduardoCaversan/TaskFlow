@@ -2,6 +2,8 @@
     <string name="app_name">TaskFlow</string>
     <string name="main_title">Minhas tarefas</string>
     <string name="main_subtitle">Organize o que precisa ser feito</string>
+    <string name="form_subtitle">Adicione os detalhes para não esquecer nada.</string>
+    <string name="edit_subtitle">Atualize os detalhes e o andamento da tarefa.</string>
     <string name="empty_tasks_title">Nenhuma tarefa por enquanto</string>
     <string name="empty_tasks_message">Use o botão abaixo para criar sua primeira tarefa.</string>
     <string name="add_task">Adicionar tarefa</string>
