@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="md_theme_light_primary">#3659C7</color><color name="md_theme_light_onPrimary">#FFFFFF</color><color name="md_theme_light_primaryContainer">#DCE1FF</color><color name="md_theme_light_onPrimaryContainer">#00164F</color>
+    <color name="md_theme_light_secondary">#566078</color><color name="md_theme_light_onSecondary">#FFFFFF</color><color name="md_theme_light_secondaryContainer">#DAE2F9</color><color name="md_theme_light_onSecondaryContainer">#131C2D</color>
+    <color name="md_theme_light_background">#FAF8FF</color><color name="md_theme_light_onBackground">#1A1B20</color><color name="md_theme_light_surface">#FAF8FF</color><color name="md_theme_light_onSurface">#1A1B20</color><color name="md_theme_light_surfaceVariant">#E1E2EC</color><color name="md_theme_light_onSurfaceVariant">#44474F</color><color name="md_theme_light_outline">#747780</color><color name="md_theme_light_error">#BA1A1A</color>
+    <color name="md_theme_dark_primary">#B6C4FF</color><color name="md_theme_dark_onPrimary">#00297D</color><color name="md_theme_dark_primaryContainer">#1943AA</color><color name="md_theme_dark_onPrimaryContainer">#DCE1FF</color>
+    <color name="md_theme_dark_secondary">#BEC6DC</color><color name="md_theme_dark_onSecondary">#283141</color><color name="md_theme_dark_secondaryContainer">#3E4758</color><color name="md_theme_dark_onSecondaryContainer">#DAE2F9</color>
+    <color name="md_theme_dark_background">#121318</color><color name="md_theme_dark_onBackground">#E3E2E9</color><color name="md_theme_dark_surface">#121318</color><color name="md_theme_dark_onSurface">#E3E2E9</color><color name="md_theme_dark_surfaceVariant">#44474F</color><color name="md_theme_dark_onSurfaceVariant">#C4C6D0</color><color name="md_theme_dark_outline">#8E9099</color><color name="md_theme_dark_error">#FFB4AB</color>
+    <color name="priority_high_container">#FFDAD6</color><color name="priority_high_on_container">#410002</color>
+    <color name="priority_medium_container">#FFE08A</color><color name="priority_medium_on_container">#251A00</color>
+    <color name="priority_low_container">#C8E6D6</color><color name="priority_low_on_container">#003824</color>
 </resources>
