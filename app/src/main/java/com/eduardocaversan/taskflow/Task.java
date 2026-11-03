@@ -1,12 +1,21 @@
 package com.eduardocaversan.taskflow;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "tasks")
 public class Task {
-    private final long id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     private String description;
     private String priority;
     private boolean completed;
-    public Task(long id, String description, String priority) { this.id = id; this.description = description; this.priority = priority; }
+    public Task() { }
+    @Ignore
+    public Task(String description, String priority) { this.description = description; this.priority = priority; }
     public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public String getPriority() { return priority; }
