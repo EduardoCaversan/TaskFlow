@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -49,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ScreenInsets.apply(this);
         taskList = findViewById(R.id.task_list);
         emptyState = findViewById(R.id.empty_state);
         emptyTitle = findViewById(R.id.empty_state_title);
@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             TextView description = item.findViewById(R.id.text_task_description);
             description.setText(task.getDescription());
             description.setPaintFlags(task.isCompleted() ? description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            description.setAlpha(task.isCompleted() ? 0.62f : 1f);
             TextView priority = item.findViewById(R.id.text_task_priority);
             String priorityText = task.getPriority() == null ? getString(R.string.priority_required) : task.getPriority();
             priority.setText(priorityText.toUpperCase(Locale.getDefault()));
@@ -111,9 +110,9 @@ public class MainActivity extends AppCompatActivity {
             status.setText(task.isCompleted() ? R.string.status_completed : R.string.status_pending);
             status.setBackgroundResource(task.isCompleted() ? R.drawable.bg_status_completed : R.drawable.bg_status_pending);
             status.setTextColor(ContextCompat.getColor(this, task.isCompleted() ? R.color.status_completed_text : R.color.status_pending_text));
-            ((ImageView) item.findViewById(R.id.image_task_status)).setImageResource(task.isCompleted() ? R.drawable.ic_check_circle_24 : R.drawable.ic_pending_24);
             CheckBox completed = item.findViewById(R.id.checkbox_completed);
-            completed.setContentDescription(getString(task.isCompleted() ? R.string.mark_pending : R.string.mark_completed));
+            completed.setContentDescription(getString(R.string.task_checkbox_label,
+                    getString(task.isCompleted() ? R.string.mark_pending : R.string.mark_completed), task.getDescription()));
             completed.setChecked(task.isCompleted());
             completed.setEnabled(!changingStatus.contains(task.getId()));
             completed.setOnCheckedChangeListener((button, checked) -> {
@@ -127,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         button.setChecked(task.isCompleted());
                         button.setEnabled(true);
                         Snackbar.make(taskList, R.string.save_failed, Snackbar.LENGTH_LONG).show();
+                        showTasks();
                     } else {
                         Snackbar.make(taskList, R.string.task_updated, Snackbar.LENGTH_SHORT).show();
                         showTasks();

@@ -1,0 +1,12 @@
+<resources>
+    <color name="priority_high_container">#542B36</color>
+    <color name="priority_high_on_container">#FFB8C4</color>
+    <color name="priority_medium_container">#493C20</color>
+    <color name="priority_medium_on_container">#F4D58D</color>
+    <color name="priority_low_container">#193F35</color>
+    <color name="priority_low_on_container">#9DDAC5</color>
+    <color name="status_pending_container">#303548</color>
+    <color name="status_pending_text">#D3D8EC</color>
+    <color name="status_completed_container">#193F35</color>
+    <color name="status_completed_text">#9DDAC5</color>
+</resources>

@@ -21,6 +21,7 @@ public class TaskDetailActivity extends AppCompatActivity {
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_detail);
+        ScreenInsets.apply(this);
         formPopulated = savedInstanceState != null && savedInstanceState.getBoolean(FORM_POPULATED);
         editor = new ViewModelProvider(this).get(TaskEditorState.class);
         OnBackPressedCallback waitForWrite = new OnBackPressedCallback(false) {

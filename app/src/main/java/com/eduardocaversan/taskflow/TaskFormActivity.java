@@ -18,6 +18,7 @@ public class TaskFormActivity extends AppCompatActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_form);
+        ScreenInsets.apply(this);
         editor = new ViewModelProvider(this).get(TaskEditorState.class);
         OnBackPressedCallback waitForWrite = new OnBackPressedCallback(false) {
             @Override public void handleOnBackPressed() { /* Aguarda confirmação do banco. */ }

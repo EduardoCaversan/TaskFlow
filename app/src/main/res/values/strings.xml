@@ -5,7 +5,6 @@
     <string name="task_not_found">Esta tarefa não está mais disponível.</string>
     <string name="retry">Tentar novamente</string>
     <string name="app_name">TaskFlow</string>
-    <string name="main_title">Minhas tarefas</string>
     <string name="main_subtitle">Organize o que precisa ser feito</string>
     <string name="form_subtitle">Adicione os detalhes para não esquecer nada.</string>
     <string name="edit_subtitle">Atualize os detalhes e o andamento da tarefa.</string>
@@ -21,7 +20,6 @@
     <string name="priority_low">Baixa</string>
     <string name="priority_medium">Média</string>
     <string name="priority_high">Alta</string>
-    <string name="priority_label">Prioridade: %1$s</string>
     <string name="task_status">Situação</string>
     <string name="status_pending">Pendente</string>
     <string name="status_completed">Concluída</string>
@@ -60,4 +58,7 @@
     <string name="theme_current_system">Tema atual: sistema</string>
     <string name="theme_current_light">Tema atual: claro</string>
     <string name="theme_current_dark">Tema atual: escuro</string>
+    <string name="count_zero">0</string>
+    <string name="back">Voltar</string>
+    <string name="task_checkbox_label">%1$s: %2$s</string>
 </resources>
