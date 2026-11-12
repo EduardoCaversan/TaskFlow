@@ -4,35 +4,64 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Spinner;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.android.material.snackbar.Snackbar;
 
 public class TaskFormActivity extends AppCompatActivity {
-    @Override public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); setContentView(R.layout.activity_task_form);
+    private TaskEditorState editor;
+
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_task_form);
+        editor = new ViewModelProvider(this).get(TaskEditorState.class);
+        OnBackPressedCallback waitForWrite = new OnBackPressedCallback(false) {
+            @Override public void handleOnBackPressed() { /* Aguarda confirmação do banco. */ }
+        };
+        getOnBackPressedDispatcher().addCallback(this, waitForWrite);
         findViewById(R.id.button_back).setOnClickListener(view -> finish());
         findViewById(R.id.button_cancel).setOnClickListener(view -> finish());
         findViewById(R.id.button_save).setOnClickListener(view -> saveTask());
-    }
-    private void saveTask() {
-        TextInputLayout layout = findViewById(R.id.input_description_layout);
-        TextInputEditText input = findViewById(R.id.input_description);
-        String description = input.getText() == null ? "" : input.getText().toString().trim();
-        Spinner priority = findViewById(R.id.spinner_priority);
-        if (description.isEmpty()) { layout.setError(getString(R.string.description_required)); return; }
-        if (!isValidPriority(priority.getSelectedItem().toString())) { layout.setError(getString(R.string.priority_required)); return; }
-        layout.setError(null);
-        findViewById(R.id.button_save).setEnabled(false);
-        TaskRepository.getInstance(this).add(new Task(description, priority.getSelectedItem().toString()), (id, error) -> {
-            if (isFinishing() || isDestroyed()) return;
-            findViewById(R.id.button_save).setEnabled(true);
-            if (error == null) finishWithFeedback(R.string.task_created);
-            else Snackbar.make(input, R.string.save_failed, Snackbar.LENGTH_LONG).show();
+        editor.status().observe(this, status -> {
+            boolean enabled = !editor.busy();
+            for (int id : new int[]{R.id.button_save, R.id.button_back, R.id.button_cancel,
+                    R.id.input_description, R.id.spinner_priority}) findViewById(id).setEnabled(enabled);
+            waitForWrite.setEnabled(editor.writing());
+            if (status == TaskEditorState.Status.CREATED) finishWithFeedback(R.string.task_created);
+            else if (status == TaskEditorState.Status.SAVE_ERROR) {
+                Snackbar.make(findViewById(R.id.button_save), R.string.save_failed, Snackbar.LENGTH_LONG).show();
+            }
         });
     }
-    private boolean isValidPriority(String priority) { return priority.equals(getString(R.string.priority_low)) || priority.equals(getString(R.string.priority_medium)) || priority.equals(getString(R.string.priority_high)); }
-    private void finishWithFeedback(int message) { Intent result = new Intent(); result.putExtra(MainActivity.EXTRA_FEEDBACK, getString(message)); setResult(RESULT_OK, result); finish(); }
+
+    private void saveTask() {
+        if (editor.busy()) return;
+        TextInputLayout layout = findViewById(R.id.input_description_layout);
+        TextInputEditText input = findViewById(R.id.input_description);
+        String description = TaskRules.normalizeDescription(input.getText() == null ? null : input.getText().toString());
+        Object selected = ((Spinner) findViewById(R.id.spinner_priority)).getSelectedItem();
+        String priority = selected == null ? null : selected.toString();
+        if (description.isEmpty()) {
+            layout.setError(getString(R.string.description_required));
+            input.requestFocus();
+            return;
+        }
+        if (!TaskRules.isValidPriority(priority)) {
+            Snackbar.make(input, R.string.priority_required, Snackbar.LENGTH_LONG).show();
+            findViewById(R.id.spinner_priority).requestFocus();
+            return;
+        }
+        layout.setError(null);
+        editor.save(TaskRepository.getInstance(this), new Task(description, priority), true);
+    }
+
+    private void finishWithFeedback(int message) {
+        Intent result = new Intent().putExtra(MainActivity.EXTRA_FEEDBACK, getString(message));
+        setResult(RESULT_OK, result);
+        finish();
+    }
 }

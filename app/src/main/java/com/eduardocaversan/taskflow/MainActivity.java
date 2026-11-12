@@ -12,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.chip.ChipGroup;
@@ -21,15 +23,28 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_FEEDBACK = "feedback";
-    private static final int REQUEST_TASK = 10;
+    private static final String FILTER_STATE = "selected_filter";
     private LinearLayout taskList;
     private View emptyState;
     private TextView emptyTitle, emptyMessage, pendingCount, completedCount;
-    private String selectedFilter;
+    private TaskRules.Filter selectedFilter = TaskRules.Filter.ALL;
+    private final Set<Long> changingStatus = new HashSet<>();
+    private int loadGeneration;
+    private boolean navigating;
+    private final ActivityResultLauncher<Intent> taskLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                Intent data = result.getData();
+                String message = data == null ? null : data.getStringExtra(EXTRA_FEEDBACK);
+                if (result.getResultCode() == RESULT_OK && message != null) {
+                    Snackbar.make(taskList, message, Snackbar.LENGTH_SHORT).show();
+                }
+            });
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,30 +55,33 @@ public class MainActivity extends AppCompatActivity {
         emptyMessage = findViewById(R.id.empty_state_message);
         pendingCount = findViewById(R.id.text_pending_count);
         completedCount = findViewById(R.id.text_completed_count);
-        selectedFilter = getString(R.string.filter_all);
-        findViewById(R.id.button_add_task).setOnClickListener(view -> startActivityForResult(new Intent(this, TaskFormActivity.class), REQUEST_TASK));
+        if (savedInstanceState != null) selectedFilter = TaskRules.Filter.valueOf(
+                savedInstanceState.getString(FILTER_STATE, TaskRules.Filter.ALL.name()));
+        findViewById(R.id.button_add_task).setOnClickListener(view -> openEditor(new Intent(this, TaskFormActivity.class)));
         MaterialButton themeButton = findViewById(R.id.button_theme);
         updateThemeButton(themeButton);
         themeButton.setOnClickListener(view -> showThemeSelector());
         ChipGroup filters = findViewById(R.id.filter_group);
+        filters.check(selectedFilter == TaskRules.Filter.PENDING ? R.id.chip_pending
+                : selectedFilter == TaskRules.Filter.COMPLETED ? R.id.chip_completed : R.id.chip_all);
         filters.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
             int id = checkedIds.get(0);
-            selectedFilter = id == R.id.chip_pending ? getString(R.string.filter_pending) : id == R.id.chip_completed ? getString(R.string.filter_completed) : getString(R.string.filter_all);
+            selectedFilter = id == R.id.chip_pending ? TaskRules.Filter.PENDING
+                    : id == R.id.chip_completed ? TaskRules.Filter.COMPLETED : TaskRules.Filter.ALL;
             showTasks();
         });
     }
 
-    @Override protected void onResume() { super.onResume(); if (taskList != null) showTasks(); }
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TASK && resultCode == RESULT_OK) {
-            if (data != null) Snackbar.make(taskList, data.getStringExtra(EXTRA_FEEDBACK), Snackbar.LENGTH_SHORT).show();
-        }
+    @Override protected void onResume() { super.onResume(); navigating = false; showTasks(); }
+    @Override protected void onSaveInstanceState(Bundle state) {
+        state.putString(FILTER_STATE, selectedFilter.name());
+        super.onSaveInstanceState(state);
     }
     private void showTasks() {
+        int generation = ++loadGeneration;
         TaskRepository.getInstance(this).getAll((tasks, error) -> {
-            if (isFinishing() || isDestroyed()) return;
+            if (isFinishing() || isDestroyed() || generation != loadGeneration) return;
             if (error != null) {
                 Snackbar.make(taskList, R.string.load_failed, Snackbar.LENGTH_INDEFINITE)
                         .setAction(R.string.retry, view -> showTasks()).show();
@@ -74,19 +92,21 @@ public class MainActivity extends AppCompatActivity {
     }
     private void renderTasks(List<Task> tasks) {
         if (isFinishing() || isDestroyed()) return;
-        int pending = 0;
-        for (Task task : tasks) if (!task.isCompleted()) pending++;
+        int pending = TaskRules.countPending(tasks);
         pendingCount.setText(String.valueOf(pending));
         completedCount.setText(String.valueOf(tasks.size() - pending));
         taskList.removeAllViews(); boolean hasVisibleTasks = false; LayoutInflater inflater = LayoutInflater.from(this);
         for (Task task : tasks) {
-            if (!matchesFilter(task)) continue;
+            if (!TaskRules.matches(task, selectedFilter)) continue;
             hasVisibleTasks = true; View item = inflater.inflate(R.layout.item_task, taskList, false);
             TextView description = item.findViewById(R.id.text_task_description);
             description.setText(task.getDescription());
             description.setPaintFlags(task.isCompleted() ? description.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG : description.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
             description.setAlpha(task.isCompleted() ? 0.62f : 1f);
-            TextView priority = item.findViewById(R.id.text_task_priority); priority.setText(task.getPriority().toUpperCase(Locale.getDefault())); applyPriorityStyle(priority, task.getPriority());
+            TextView priority = item.findViewById(R.id.text_task_priority);
+            String priorityText = task.getPriority() == null ? getString(R.string.priority_required) : task.getPriority();
+            priority.setText(priorityText.toUpperCase(Locale.getDefault()));
+            applyPriorityStyle(priority, priorityText);
             TextView status = item.findViewById(R.id.text_task_status);
             status.setText(task.isCompleted() ? R.string.status_completed : R.string.status_pending);
             status.setBackgroundResource(task.isCompleted() ? R.drawable.bg_status_completed : R.drawable.bg_status_pending);
@@ -95,16 +115,22 @@ public class MainActivity extends AppCompatActivity {
             CheckBox completed = item.findViewById(R.id.checkbox_completed);
             completed.setContentDescription(getString(task.isCompleted() ? R.string.mark_pending : R.string.mark_completed));
             completed.setChecked(task.isCompleted());
+            completed.setEnabled(!changingStatus.contains(task.getId()));
             completed.setOnCheckedChangeListener((button, checked) -> {
                 if (checked == task.isCompleted() || !button.isEnabled()) return;
                 button.setEnabled(false);
+                changingStatus.add(task.getId());
                 TaskRepository.getInstance(this).updateStatus(task.getId(), checked, (unused, error) -> {
+                    changingStatus.remove(task.getId());
                     if (isFinishing() || isDestroyed()) return;
                     if (error != null) {
                         button.setChecked(task.isCompleted());
                         button.setEnabled(true);
                         Snackbar.make(taskList, R.string.save_failed, Snackbar.LENGTH_LONG).show();
-                    } else showTasks();
+                    } else {
+                        Snackbar.make(taskList, R.string.task_updated, Snackbar.LENGTH_SHORT).show();
+                        showTasks();
+                    }
                 });
             });
             item.setOnClickListener(view -> openTaskDetails(task.getId())); taskList.addView(item);
@@ -113,12 +139,18 @@ public class MainActivity extends AppCompatActivity {
         if (!hasVisibleTasks) updateEmptyState();
     }
     private void updateEmptyState() {
-        if (selectedFilter.equals(getString(R.string.filter_pending))) { emptyTitle.setText(R.string.empty_pending_title); emptyMessage.setText(R.string.empty_pending_message); }
-        else if (selectedFilter.equals(getString(R.string.filter_completed))) { emptyTitle.setText(R.string.empty_completed_title); emptyMessage.setText(R.string.empty_completed_message); }
+        if (selectedFilter == TaskRules.Filter.PENDING) { emptyTitle.setText(R.string.empty_pending_title); emptyMessage.setText(R.string.empty_pending_message); }
+        else if (selectedFilter == TaskRules.Filter.COMPLETED) { emptyTitle.setText(R.string.empty_completed_title); emptyMessage.setText(R.string.empty_completed_message); }
         else { emptyTitle.setText(R.string.empty_tasks_title); emptyMessage.setText(R.string.empty_tasks_message); }
     }
-    private boolean matchesFilter(Task task) { return selectedFilter.equals(getString(R.string.filter_all)) || (selectedFilter.equals(getString(R.string.filter_pending)) && !task.isCompleted()) || (selectedFilter.equals(getString(R.string.filter_completed)) && task.isCompleted()); }
-    private void openTaskDetails(long taskId) { Intent intent = new Intent(this, TaskDetailActivity.class); intent.putExtra(EXTRA_TASK_ID, taskId); startActivityForResult(intent, REQUEST_TASK); }
+    private void openTaskDetails(long taskId) {
+        if (!changingStatus.contains(taskId)) openEditor(new Intent(this, TaskDetailActivity.class).putExtra(EXTRA_TASK_ID, taskId));
+    }
+    private void openEditor(Intent intent) {
+        if (navigating) return;
+        navigating = true;
+        taskLauncher.launch(intent);
+    }
     private void showThemeSelector() {
         String currentMode = ThemePreferences.getThemeMode(this);
         new MaterialAlertDialogBuilder(this)

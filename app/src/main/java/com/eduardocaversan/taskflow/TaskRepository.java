@@ -31,8 +31,13 @@ public class TaskRepository {
 
     public void getAll(Callback<List<Task>> callback) { run(() -> taskDao.getAll(), callback); }
     public void findById(long id, Callback<Task> callback) { run(() -> taskDao.findById(id), callback); }
-    public void add(Task task, Callback<Long> callback) { run(() -> taskDao.insert(task), callback); }
-    public void update(Task task, Callback<Void> callback) { run(() -> { requireChanged(taskDao.update(task)); return null; }, callback); }
+    public void add(Task task, Callback<Long> callback) {
+        run(() -> {
+            if (task.getId() != 0) throw new IllegalArgumentException("New tasks must not have an ID");
+            return taskDao.insert(TaskRules.validatedCopy(task));
+        }, callback);
+    }
+    public void update(Task task, Callback<Void> callback) { run(() -> { requireChanged(taskDao.update(TaskRules.validatedCopy(task))); return null; }, callback); }
     public void updateStatus(long id, boolean completed, Callback<Void> callback) { run(() -> { requireChanged(taskDao.updateStatus(id, completed)); return null; }, callback); }
     public void delete(Task task, Callback<Void> callback) { run(() -> { requireChanged(taskDao.delete(task)); return null; }, callback); }
 
