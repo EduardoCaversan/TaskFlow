@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.snackbar.Snackbar;
 
 public class TaskFormActivity extends AppCompatActivity {
     @Override public void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,13 @@ public class TaskFormActivity extends AppCompatActivity {
         if (description.isEmpty()) { layout.setError(getString(R.string.description_required)); return; }
         if (!isValidPriority(priority.getSelectedItem().toString())) { layout.setError(getString(R.string.priority_required)); return; }
         layout.setError(null);
-        TaskRepository.getInstance(this).add(new Task(description, priority.getSelectedItem().toString()), id -> finishWithFeedback(R.string.task_created));
+        findViewById(R.id.button_save).setEnabled(false);
+        TaskRepository.getInstance(this).add(new Task(description, priority.getSelectedItem().toString()), (id, error) -> {
+            if (isFinishing() || isDestroyed()) return;
+            findViewById(R.id.button_save).setEnabled(true);
+            if (error == null) finishWithFeedback(R.string.task_created);
+            else Snackbar.make(input, R.string.save_failed, Snackbar.LENGTH_LONG).show();
+        });
     }
     private boolean isValidPriority(String priority) { return priority.equals(getString(R.string.priority_low)) || priority.equals(getString(R.string.priority_medium)) || priority.equals(getString(R.string.priority_high)); }
     private void finishWithFeedback(int message) { Intent result = new Intent(); result.putExtra(MainActivity.EXTRA_FEEDBACK, getString(message)); setResult(RESULT_OK, result); finish(); }

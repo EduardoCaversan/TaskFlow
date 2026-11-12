@@ -61,7 +61,17 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) Snackbar.make(taskList, data.getStringExtra(EXTRA_FEEDBACK), Snackbar.LENGTH_SHORT).show();
         }
     }
-    private void showTasks() { TaskRepository.getInstance(this).getAll(this::renderTasks); }
+    private void showTasks() {
+        TaskRepository.getInstance(this).getAll((tasks, error) -> {
+            if (isFinishing() || isDestroyed()) return;
+            if (error != null) {
+                Snackbar.make(taskList, R.string.load_failed, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.retry, view -> showTasks()).show();
+                return;
+            }
+            renderTasks(tasks);
+        });
+    }
     private void renderTasks(List<Task> tasks) {
         if (isFinishing() || isDestroyed()) return;
         int pending = 0;
@@ -85,7 +95,18 @@ public class MainActivity extends AppCompatActivity {
             CheckBox completed = item.findViewById(R.id.checkbox_completed);
             completed.setContentDescription(getString(task.isCompleted() ? R.string.mark_pending : R.string.mark_completed));
             completed.setChecked(task.isCompleted());
-            completed.setOnCheckedChangeListener((button, checked) -> { if (checked != task.isCompleted()) TaskRepository.getInstance(this).updateStatus(task.getId(), checked, this::showTasks); });
+            completed.setOnCheckedChangeListener((button, checked) -> {
+                if (checked == task.isCompleted() || !button.isEnabled()) return;
+                button.setEnabled(false);
+                TaskRepository.getInstance(this).updateStatus(task.getId(), checked, (unused, error) -> {
+                    if (isFinishing() || isDestroyed()) return;
+                    if (error != null) {
+                        button.setChecked(task.isCompleted());
+                        button.setEnabled(true);
+                        Snackbar.make(taskList, R.string.save_failed, Snackbar.LENGTH_LONG).show();
+                    } else showTasks();
+                });
+            });
             item.setOnClickListener(view -> openTaskDetails(task.getId())); taskList.addView(item);
         }
         emptyState.setVisibility(hasVisibleTasks ? View.GONE : View.VISIBLE);

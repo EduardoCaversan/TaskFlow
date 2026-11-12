@@ -1,4 +1,9 @@
 <resources>
+    <string name="load_failed">Não foi possível carregar as tarefas. Tente novamente.</string>
+    <string name="save_failed">Não foi possível salvar. Seus dados não foram confirmados. Tente novamente.</string>
+    <string name="delete_failed">Não foi possível excluir a tarefa. Tente novamente.</string>
+    <string name="task_not_found">Esta tarefa não está mais disponível.</string>
+    <string name="retry">Tentar novamente</string>
     <string name="app_name">TaskFlow</string>
     <string name="main_title">Minhas tarefas</string>
     <string name="main_subtitle">Organize o que precisa ser feito</string>

@@ -3,6 +3,7 @@ package com.eduardocaversan.taskflow;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -10,7 +11,7 @@ import java.util.concurrent.Executors;
 
 /** Camada simples entre as telas e o Room; o banco nunca bloqueia a interface. */
 public class TaskRepository {
-    public interface Callback<T> { void onComplete(T value); }
+    public interface Callback<T> { void onComplete(T value, Exception error); }
 
     private static volatile TaskRepository instance;
     private final TaskDao taskDao;
@@ -31,16 +32,23 @@ public class TaskRepository {
     public void getAll(Callback<List<Task>> callback) { run(() -> taskDao.getAll(), callback); }
     public void findById(long id, Callback<Task> callback) { run(() -> taskDao.findById(id), callback); }
     public void add(Task task, Callback<Long> callback) { run(() -> taskDao.insert(task), callback); }
-    public void update(Task task, Runnable callback) { run(() -> { taskDao.update(task); return null; }, ignored -> callback.run()); }
-    public void updateStatus(long id, boolean completed, Runnable callback) { run(() -> { taskDao.updateStatus(id, completed); return null; }, ignored -> callback.run()); }
-    public void delete(Task task, Runnable callback) { run(() -> { taskDao.delete(task); return null; }, ignored -> callback.run()); }
+    public void update(Task task, Callback<Void> callback) { run(() -> { requireChanged(taskDao.update(task)); return null; }, callback); }
+    public void updateStatus(long id, boolean completed, Callback<Void> callback) { run(() -> { requireChanged(taskDao.updateStatus(id, completed)); return null; }, callback); }
+    public void delete(Task task, Callback<Void> callback) { run(() -> { requireChanged(taskDao.delete(task)); return null; }, callback); }
+
+    private static void requireChanged(int rows) {
+        if (rows != 1) throw new IllegalStateException("Task no longer exists");
+    }
 
     private <T> void run(java.util.concurrent.Callable<T> work, Callback<T> callback) {
         executor.execute(() -> {
             try {
                 T result = work.call();
-                mainHandler.post(() -> callback.onComplete(result));
-            } catch (Exception ignored) { }
+                mainHandler.post(() -> callback.onComplete(result, null));
+            } catch (Exception error) {
+                Log.e("TaskRepository", "Local database operation failed", error);
+                mainHandler.post(() -> callback.onComplete(null, error));
+            }
         });
     }
 }
