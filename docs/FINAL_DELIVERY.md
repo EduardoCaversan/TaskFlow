@@ -1,12 +1,19 @@
 # Relatório da entrega final — TaskFlow 1.0.0
 
-**Aluno:** Eduardo Caversan da Silva Rocha  
-**R.A.:** 2475391  
-**Curso:** Engenharia de Software  
-**Instituição:** Universidade Tecnológica Federal do Paraná — UTFPR  
-**Câmpus:** Cornélio Procópio  
-**Disciplina:** Programação para Dispositivos Móveis  
-**Plataforma e linguagem:** Android nativo, Java, layouts XML  
+**Aluno:** Eduardo Caversan da Silva Rocha
+
+**R.A.:** 2475391
+
+**Curso:** Engenharia de Software
+
+**Instituição:** Universidade Tecnológica Federal do Paraná — UTFPR
+
+**Câmpus:** Cornélio Procópio
+
+**Disciplina:** Programação para Dispositivos Móveis
+
+**Plataforma e linguagem:** Android nativo, Java, layouts XML
+
 **Conclusão da revisão:** 14/11/2026
 
 ## Objetivo e escopo
@@ -69,10 +76,12 @@ Todos os comandos abaixo terminaram com **código 0 / BUILD SUCCESSFUL** no Wind
 
 Os 21 casos são: oito DAO, quatro repository, três estado de formulário e seis Espresso. Os seis fluxos de UI também passaram em 360 × 640. Capturas e inspeções adicionais cobriram claro/escuro, fonte 200%, horizontal e tamanho de tablet. Os testes verificaram teclado aberto, recriação e texto longo; encerramento/reabertura do processo preservou tarefa e tema escuro na verificação via ADB.
 
-**APK debug:** `app/build/outputs/apk/debug/app-debug.apk`  
+**APK debug:** `app/build/outputs/apk/debug/app-debug.apk`
+
 **SHA-256:** `86ca9b28c642183015e15c90a70b3197e18c73d41a121f115d288704c5588c32`
 
-**APK release:** `app/build/outputs/apk/release/app-release-unsigned.apk`  
+**APK release:** `app/build/outputs/apk/release/app-release-unsigned.apk`
+
 **SHA-256:** `e3fc5d72c538e0ba4db918be197960beb703cf9e081e8691f48119f4ca3de0af`
 
 Para localizar o debug no Android Studio, abra a pasta `app/build/outputs/apk/debug` após `assembleDebug`. Instalação de desenvolvimento: `adb install -r app/build/outputs/apk/debug/app-debug.apk`. O release precisa de assinatura própria para distribuição; nenhuma chave privada foi incluída.
@@ -89,6 +98,7 @@ O pacote de fontes é `TaskFlow_Entrega_Final_Eduardo_Caversan_2475391.zip`, ger
 | `26564af` | `fix: improve accessibility and layout resilience` |
 | `c6be0e2` | `test: replace placeholders with meaningful automated tests` |
 | `7c7859c` | `chore: finalize version 1.0.0 delivery` |
+| `31e2eaa` | `docs: complete final project documentation` |
 
 A documentação é registrada depois dos commits de implementação, com a mensagem `docs: complete final project documentation`. Seu hash é obtido por `git log -1 --format="%h %s" -- docs/FINAL_DELIVERY.md`; o hash do próprio commit não pode ser escrito dentro dele sem mudá-lo. A relação completa e verificável é `git log --oneline master..HEAD`, também fornecida no relatório de conclusão da revisão.
 
