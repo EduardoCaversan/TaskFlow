@@ -1,142 +1,150 @@
-# TaskFlow
+# TaskFlow — 1.0.0
 
-Aplicativo Android nativo para organização simples e eficiente de tarefas pessoais.
+Aplicativo Android nativo para organizar tarefas pessoais, com descrição, prioridade e acompanhamento de conclusão. O objetivo é demonstrar um CRUD completo com persistência local, interface Material Design 3 e navegação entre Activities, mantendo uma implementação acadêmica simples em **Java e layouts XML**.
 
-![Android](https://img.shields.io/badge/Android-Native-3DDC84?logo=android&logoColor=white)
-![Java](https://img.shields.io/badge/Java-11-ED8B00?logo=openjdk&logoColor=white)
-![Room](https://img.shields.io/badge/Room-2.7.2-3DDC84)
-![Material Design](https://img.shields.io/badge/Material%20Design-3-757575?logo=materialdesign&logoColor=white)
+## Contexto acadêmico
 
-## Sobre o projeto
+- **Aluno e autor:** Eduardo Caversan da Silva Rocha
+- **R.A.:** 2475391
+- **Curso:** Engenharia de Software
+- **Instituição:** Universidade Tecnológica Federal do Paraná — UTFPR
+- **Câmpus:** Cornélio Procópio
+- **Disciplina:** Programação para Dispositivos Móveis
 
-O TaskFlow é um aplicativo Android nativo voltado à organização de tarefas pessoais. Foi desenvolvido com foco em simplicidade, produtividade, funcionamento offline, persistência local e uma experiência de uso moderna.
+A entrega final parte da `master` após o merge da `entrega-3` pelo PR #2. O desenvolvimento desta revisão está na branch `entrega-final`; as branches acadêmicas anteriores foram preservadas. Apresentação, slides e vídeo não fazem parte desta revisão técnica.
 
-O TaskFlow foi desenvolvido durante a disciplina de Programação para Dispositivos Móveis do curso de Engenharia de Software da Universidade Tecnológica Federal do Paraná (UTFPR), Câmpus Cornélio Procópio.
+## Funcionalidades
 
-## ✨ Funcionalidades
+- Cadastro com descrição obrigatória, normalização dos espaços nas extremidades e prioridade Baixa, Média ou Alta.
+- Lista ordenada por pendência e ID mais recente, detalhes e edição de descrição, prioridade e status.
+- Marcação como concluída ou pendente diretamente na lista.
+- Exclusão com confirmação e possibilidade de cancelar.
+- Contadores globais de pendentes e concluídas; filtros Todas, Pendentes e Concluídas.
+- Estados vazios específicos e feedback de criação, atualização, exclusão e falha.
+- Proteção contra envio duplicado e preservação do formulário durante recriação da Activity.
+- Splash, logo e ícones próprios; tema claro, escuro e opção de acompanhar o sistema.
+- Preferência de tema persistida; telas roláveis e controles com labels e áreas de toque revisadas.
+- Operação totalmente offline, sem login, backend, Firebase, anúncios ou analytics.
 
-- Criação de tarefas com descrição e prioridade (baixa, média ou alta).
-- Listagem de tarefas com contadores de pendentes e concluídas.
-- Filtros para visualizar todas, pendentes ou concluídas.
-- Marcação rápida de tarefa como concluída ou pendente pela lista.
-- Edição de descrição, prioridade e situação da tarefa.
-- Exclusão com confirmação em diálogo.
-- Validação de descrição obrigatória e de prioridade válida.
-- Estados vazios contextualizados conforme o filtro selecionado.
-- Feedback após criar, editar ou excluir tarefas por meio de `Snackbar`.
-- Tela de abertura (splash screen) e suporte a tema claro/escuro.
-- Armazenamento local, sem dependência de conexão com a internet para as funcionalidades principais.
+## Tecnologias e ambiente
 
-## Interface
-
-A interface segue Material Design 3 e utiliza uma identidade visual própria, com paleta de cores para temas claro e escuro, logo vetorial do TaskFlow e componentes Material. A tela principal reúne um cartão de progresso, chips de filtro, cards de tarefa com indicadores de prioridade e status, e um botão de ação flutuante estendido para criar tarefas.
-
-Os formulários usam campos de texto contornados, seletores para prioridade e situação, botões Material e diálogo de confirmação para exclusão.
-
-## Screenshots
-
-<!-- Screenshots da interface podem ser adicionadas aqui futuramente. -->
-
-## 🛠️ Tecnologias
-
-| Tecnologia | Papel no projeto |
+| Item | Configuração |
 | --- | --- |
-| Java 11 | Implementação das telas, regras de interação e camada de dados. |
-| Android SDK | Plataforma para desenvolvimento do aplicativo nativo. |
-| XML | Definição de layouts, temas, cores, strings e demais recursos. |
-| Material Components / Material Design 3 | Componentes visuais, tema, cards, chips, campos, botões, diálogos e `Snackbar`. |
-| Room 2.7.2 | Persistência local e abstração de acesso ao SQLite. |
-| SQLite | Banco de dados local utilizado internamente pelo Room. |
-| Gradle | Automação de compilação e gerenciamento das dependências. |
+| Linguagem do aplicativo | Java; source/target compatibility 11 |
+| Interface | XML, AppCompat 1.6.1 e Material Components 1.10.0, tema Material 3 |
+| Persistência | Room 2.7.2 sobre SQLite |
+| Android mínimo | Android 7.0, API 24 |
+| compileSdk / targetSdk | 37 / 37 |
+| Gradle / Android Gradle Plugin | Wrapper 9.5.0 / AGP 9.3.3 |
+| JVM do Gradle | JDK 25, conforme `gradle/gradle-daemon-jvm.properties` |
+| Testes | JUnit 4.13.2, AndroidX Test JUnit 1.1.5, Espresso 3.5.1 |
 
-O projeto utiliza `minSdk 24`, `targetSdk 37` e `compileSdk 37`.
+Use Android Studio compatível com o AGP declarado, SDK Platform 37, SDK Build Tools e Platform Tools. O JDK 11 descreve a compatibilidade do código, **não** o JDK necessário para executar este Gradle. Configure JDK 25 como Gradle JDK, ou permita o provisionamento de toolchain configurado no projeto. No ambiente validado, o wrapper foi iniciado pelo JDK 17 e o daemon usou Java 25.
 
-## 💾 Persistência de dados
+A primeira sincronização requer internet para baixar ferramentas e dependências. O aplicativo instalado não requer internet nem solicita permissões de rede.
 
-Os dados são mantidos localmente no banco `taskflow.db`. O Room atua como camada de abstração sobre o SQLite:
-
-- `Task` é a entidade da tabela `tasks`.
-- `TaskDao` define inserção, consulta, atualização de tarefa/status e exclusão.
-- `TaskDatabase` configura o `RoomDatabase` e disponibiliza o DAO.
-- `TaskRepository` centraliza as operações e as executa fora da thread de interface, retornando o resultado à tela principal.
-
-Assim, as tarefas permanecem armazenadas no dispositivo entre usos do aplicativo.
-
-## 🗂️ Estrutura do projeto
+## Arquitetura e estrutura
 
 ```text
-TaskFlow/
-├── app/
-│   ├── src/main/
-│   │   ├── java/com/eduardocaversan/taskflow/
-│   │   │   ├── MainActivity.java
-│   │   │   ├── SplashActivity.java
-│   │   │   ├── TaskFormActivity.java
-│   │   │   ├── TaskDetailActivity.java
-│   │   │   ├── Task.java
-│   │   │   ├── TaskDao.java
-│   │   │   ├── TaskDatabase.java
-│   │   │   └── TaskRepository.java
-│   │   ├── res/
-│   │   │   ├── layout/
-│   │   │   ├── drawable/
-│   │   │   └── values/
-│   │   └── AndroidManifest.xml
-│   └── build.gradle.kts
-├── gradle/
-├── build.gradle.kts
-└── settings.gradle.kts
+app/
+  build.gradle.kts
+  schemas/com.eduardocaversan.taskflow.TaskDatabase/1.json
+  src/main/
+    AndroidManifest.xml
+    java/com/eduardocaversan/taskflow/
+      Task.java, TaskDao.java, TaskDatabase.java, TaskRepository.java
+      TaskRules.java, TaskEditorState.java, ThemePreferences.java
+      TaskFlowApplication.java, ScreenInsets.java
+      SplashActivity.java, MainActivity.java
+      TaskFormActivity.java, TaskDetailActivity.java
+    res/                     # layouts, temas, strings, cores, ícones e backup
+  src/test/                  # regras Java
+  src/androidTest/           # Room, repository, estado de tela e Espresso
+docs/                        # arquitetura, auditoria, testes e entrega
+gradle/                      # catálogo de versões, toolchain e wrapper
+gradlew, gradlew.bat          # wrappers Linux/macOS e Windows
 ```
 
-`MainActivity` exibe e filtra as tarefas; `TaskFormActivity` realiza o cadastro; `TaskDetailActivity` permite editar, alterar a situação e excluir; e `SplashActivity` apresenta a tela inicial. A camada formada por `Task`, `TaskDao`, `TaskDatabase` e `TaskRepository` organiza o acesso persistente aos dados.
+As Activities chamam o `TaskRepository`, que executa o DAO fora da main thread e entrega sucesso ou erro na UI. `TaskEditorState` preserva a operação em andamento durante recriação; `TaskRules` centraliza regras pequenas e testáveis. Veja o diagrama e as decisões em [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## 🔄 CRUD
+## Persistência e fluxo do CRUD
 
-- **Create:** `TaskFormActivity` cria tarefas por `TaskRepository.add()`.
-- **Read:** `MainActivity` obtém a lista com `TaskRepository.getAll()` e `TaskDao.getAll()`.
-- **Update:** `TaskDetailActivity` atualiza descrição, prioridade e situação; a lista também altera rapidamente o status com `updateStatus()`.
-- **Delete:** `TaskDetailActivity` remove a tarefa confirmada pelo usuário via `TaskRepository.delete()`.
+O banco local é **`taskflow.db`**, tabela `tasks`, schema versão **1**. A revisão preserva a estrutura anterior, sem fallback destrutivo, sem consultas na main thread e sem apagar tarefas durante atualização normal.
 
-## ▶️ Como executar
+1. **Criar:** Main → Nova tarefa → validar → inserir pelo repository → confirmar sucesso → retornar à Main.
+2. **Consultar:** o repository lista as tarefas; a Main calcula os contadores globais e aplica o filtro selecionado.
+3. **Atualizar:** tocar na tarefa carrega seu ID; salvar atualiza apenas esse registro. O CheckBox da lista altera somente o status.
+4. **Excluir:** Detalhes → Excluir → confirmar → remover e retornar. Cancelar não altera dados; falha mantém a tela aberta.
 
-**Requisitos:** Android Studio, JDK 11 e um emulador ou dispositivo Android com API 24 (Android 7.0) ou superior.
+O singleton usa Application Context. As operações são serializadas e exceções são registradas e comunicadas à interface. O banco permanece entre aberturas do aplicativo. Backup automático e transferência automática estão desabilitados para manter os dados exclusivamente locais; desinstalar ou limpar dados remove tarefas e preferências.
 
-1. Clone o repositório:
+## Temas
 
-   ```bash
-   git clone https://github.com/EduardoCaversan/TaskFlow.git
-   ```
+O botão de tema abre as opções Sistema, Claro e Escuro. A escolha fica em `SharedPreferences` e é aplicada por `TaskFlowApplication` antes das Activities. O tema pode recriar a tela; o filtro e os dados permanecem. Prioridades e status têm texto e cores próprias para os dois temas.
 
-2. Abra a pasta do projeto no Android Studio.
-3. Aguarde ou execute a sincronização do Gradle.
-4. Selecione um emulador ou conecte um dispositivo físico compatível.
-5. Execute o módulo `app`.
+## Clonar, abrir e executar
 
-## 📱 Funcionamento offline
+```bash
+git clone https://github.com/EduardoCaversan/TaskFlow.git
+cd TaskFlow
+git switch entrega-final
+```
 
-As tarefas são armazenadas localmente com Room/SQLite. Por isso, criação, consulta, edição, alteração de status, exclusão e filtros funcionam sem conexão com a internet.
+A branch precisa estar publicada no remoto para o último comando funcionar. Para a entrega em ZIP, extraia o arquivo e abra a pasta que contém `settings.gradle.kts`.
 
-## 🎓 Contexto acadêmico
+No Android Studio, use **Open**, selecione a pasta do projeto e aguarde a sincronização. Configure o caminho do SDK local pela IDE (o arquivo `local.properties` não é distribuído). Escolha o módulo `app`, um emulador ou dispositivo com API 24 ou superior e execute **Run**.
 
-Este é um projeto acadêmico desenvolvido durante a disciplina de **Programação para Dispositivos Móveis**, do curso de **Engenharia de Software**, da **Universidade Tecnológica Federal do Paraná (UTFPR) — Câmpus Cornélio Procópio**.
+## Build e testes
 
-**Aluno:** Eduardo Caversan da Silva Rocha  
-**R.A.:** 2475391
+No Windows, em PowerShell na raiz:
 
-O projeto aplica, na prática, desenvolvimento Android nativo, construção de interfaces, navegação entre telas, persistência local, banco de dados e operações CRUD.
+```powershell
+.\gradlew.bat clean
+.\gradlew.bat test
+.\gradlew.bat lint
+.\gradlew.bat assembleDebug
+.\gradlew.bat assembleRelease
+.\gradlew.bat connectedAndroidTest
+```
 
-## 🧠 Conceitos aplicados
+No Linux/macOS:
 
-- Desenvolvimento Android nativo com Java e layouts XML.
-- `Activities` e navegação entre telas com `Intent`.
-- Material Design 3, temas claro/escuro e gerenciamento de resources.
-- Persistência local com Room, SQLite, `Entity`, `DAO` e `RoomDatabase`.
-- Operações CRUD e execução de acesso ao banco fora da thread de interface.
-- Validação de formulário, filtros por status e feedback visual ao usuário.
+```bash
+chmod +x gradlew
+./gradlew clean
+./gradlew test
+./gradlew lint
+./gradlew assembleDebug
+./gradlew assembleRelease
+./gradlew connectedAndroidTest
+```
 
-## 👤 Autor
+`connectedAndroidTest` requer dispositivo/emulador conectado e dedicado a testes, pois o runner pode reinstalar/desinstalar o aplicativo. Os testes de banco usam Room in-memory, além de um arquivo exclusivo de teste para validar reabertura. Os testes de UI criam tarefas com identificador próprio e sua limpeza remove somente essas tarefas.
 
-**Eduardo Caversan da Silva Rocha**  
-R.A.: 2475391  
-Engenharia de Software — UTFPR, Câmpus Cornélio Procópio  
-[GitHub: EduardoCaversan](https://github.com/EduardoCaversan)
+- **APK debug instalável:** `app/build/outputs/apk/debug/app-debug.apk`
+- **APK release sem assinatura de distribuição:** `app/build/outputs/apk/release/app-release-unsigned.apk`
+- **Testes locais:** `app/build/reports/tests/testDebugUnitTest/index.html`
+- **Lint:** `app/build/reports/lint-results-debug.html`
+- **Instrumentados:** `app/build/reports/androidTests/connected/debug/index.html`
+
+Não há chave privada de assinatura no repositório. O debug usa a chave de desenvolvimento gerada pelo Android SDK. Para instalar manualmente: `adb install -r app/build/outputs/apk/debug/app-debug.apk`.
+
+Consulte [TESTING.md](docs/TESTING.md) para casos, resultados efetivos, configurações de tela e limitações. A [matriz de auditoria](docs/AUDIT.md) registra o diagnóstico inicial; [FINAL_DELIVERY.md](docs/FINAL_DELIVERY.md) reúne as evidências finais e os commits. As mudanças estão no [CHANGELOG.md](CHANGELOG.md).
+
+## Limitações e decisões
+
+O aplicativo é destinado ao volume de tarefas de um projeto acadêmico: a lista carrega todos os registros, sem paginação. Não há sincronização, exportação ou recuperação após desinstalação. Uma escrita em andamento sobrevive à rotação, mas não há garantia de continuar executando após o sistema matar o processo; nesse caso, confira a listagem antes de reenviar.
+
+A splash própria foi mantida como requisito; Android 12+ também possui sua tela de inicialização do sistema. As versões das dependências foram preservadas após validação, sem atualizações amplas apenas para eliminar avisos de disponibilidade. A navegação antiga foi substituída por Activity Result APIs.
+
+## Capturas reais
+
+Capturas da versão final no emulador API 24, área lógica 412 × 915. Outras configurações estão documentadas em [TESTING.md](docs/TESTING.md).
+
+| Claro | Escuro |
+| --- | --- |
+| ![Lista de tarefas no tema claro](docs/screenshots/main-412-light.png) | ![Lista de tarefas no tema escuro](docs/screenshots/main-412-dark.png) |
+
+## Autor
+
+Eduardo Caversan da Silva Rocha — R.A. 2475391. Engenharia de Software, UTFPR, Câmpus Cornélio Procópio. [Repositório no GitHub](https://github.com/EduardoCaversan/TaskFlow).
