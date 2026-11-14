@@ -11,7 +11,7 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     long insert(Task task);
 
     @Query("SELECT * FROM tasks ORDER BY completed ASC, id DESC")
@@ -21,11 +21,11 @@ public interface TaskDao {
     Task findById(long id);
 
     @Update
-    void update(Task task);
+    int update(Task task);
 
     @Query("UPDATE tasks SET completed = :completed WHERE id = :id")
-    void updateStatus(long id, boolean completed);
+    int updateStatus(long id, boolean completed);
 
     @Delete
-    void delete(Task task);
+    int delete(Task task);
 }
